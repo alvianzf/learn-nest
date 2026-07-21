@@ -6,35 +6,18 @@ import { CreateProductDto } from './dto/create-product.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  // @Get()
-  // getAllProducts() {
-  //   return this.productsService.getAllProducts();
-  // }
-
-  @Get(':productName')
-  getProductByName(@Param('productName') productName: string) {
-    //pakai garing
-    return this.productsService.getProductByName(productName);
+  @Get()
+  getAllProducts() {
+    return this.productsService.getAllProducts();
   }
 
-  @Get()
-  getAllProductsByQuery(
-    // pakai ? dan &
-    @Query('name') productName: string,
-    @Query('model') productModel: string,
-    @Query('price') productPrice: string,
-    @Query('discount') productDiscount: string,
-  ) {
-    return this.productsService.getAllProductsByQuery(
-      productName,
-      productModel,
-      productPrice,
-      productDiscount,
-    );
+  @Get(':id')
+  getProductById(@Param('id') id: string) {
+    return this.productsService.getProductById(id);
   }
 
   @Post()
-  createProduct(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.createProduct(createProductDto);
+  createProduct(@Body() dto: CreateProductDto) {
+    return this.productsService.createProduct(dto);
   }
 }

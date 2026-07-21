@@ -3,29 +3,54 @@ import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductsService {
-  createProduct(createProductDto: CreateProductDto) {
-    return `This action adds a new product with name ${createProductDto.name}, model ${createProductDto.model}, price ${createProductDto.price}, and model year ${createProductDto.modelYear}`;
-  }
+  private products: CreateProductDto[] = [
+    {
+      id: 1,
+      name: 'Wireless Mouse',
+      model: 'WM-100',
+      price: 150000,
+      modelYear: 2023,
+    },
+    {
+      id: 2,
+      name: 'Bluetooth Headphones',
+      model: 'BH-200',
+      price: 599900,
+      modelYear: 2024,
+    },
+    {
+      id: 3,
+      name: 'Gaming Keyboard',
+      model: 'GK-300',
+      price: 899900,
+      modelYear: 2024,
+    },
+    {
+      id: 4,
+      name: 'USB-C Charger',
+      model: 'UC-50',
+      price: 249900,
+      modelYear: 2023,
+    },
+  ];
+  private nextId = 4;
 
   getAllProducts() {
-    return 'This is products from services';
+    return this.products;
   }
 
-  getProductByName(productName: string) {
-    return `This is product ${productName} from services`;
+  getProductById(id: string) {
+    const productId = parseInt(id);
+    return this.products.find((product) => product.id === productId);
   }
 
-  getAllProductsByQuery(
-    productName: string = 'komputer',
-    productModel: string = 'HP',
-    productPrice: string = '1000000',
-    productDiscount: string = '0',
-  ) {
-    const numPrice = parseInt(productPrice);
-    const numDiscount = parseInt(productDiscount);
+  createProduct(dto: CreateProductDto) {
+    const newProduct: CreateProductDto = {
+      id: this.nextId + 1,
+      ...dto,
+    };
 
-    const totalPay = numPrice - (numPrice * numDiscount) / 100;
-
-    return `This is product ${productName} with model ${productModel} and total Pay ${totalPay} from services`;
+    this.products.push(newProduct);
+    return newProduct;
   }
 }
