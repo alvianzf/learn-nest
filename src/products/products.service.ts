@@ -1,38 +1,40 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ProductsRepository } from './products.repository';
+import { Product, ProductsRepository } from './products.repository';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly productsRepository: ProductsRepository) {}
 
-  getAllProducts(): CreateProductDto[] | undefined {
+  getAllProducts(): Product[] {
     return this.productsRepository.getAllProducts();
   }
 
-  getProductById(id: string): CreateProductDto | undefined {
-    const productId = parseInt(id);
-    return this.productsRepository
-      .getAllProducts()
-      .find((product) => product.id === productId);
-  }
+  getProductById(id: string): Product {
+    const product = this.productsRepository.getProductById(parseInt(id, 10));
 
-  createProduct(dto: CreateProductDto) {
-    return this.productsRepository.getAllProducts().push(dto);
-  }
-
-  updateProduct(id: string, dto: UpdateProductDto) {
-    // DRY
-    // DON'T REPEAT YOURSELF
-    const currentData = this.getProductById(id);
-
-    if (!currentData) {
-      return new NotFoundException('Product not found');
-      // returns 404
+    if (!product) {
+      throw new NotFoundException('Product not found');
     }
 
-    const updatedProduct: UpdateProductDto = Object.assign(currentData, dto);
+    return product;
+  }
+
+  createProduct(dto: CreateProductDto): Product {
+    return this.productsRepository.createProduct(dto);
+  }
+
+  updateProduct(id: string, dto: UpdateProductDto): Product {
+    const updatedProduct = this.productsRepository.updateProduct(
+      parseInt(id, 10),
+      dto,
+    );
+
+    if (!updatedProduct) {
+      throw new NotFoundException('Product not found');
+    }
+
     return updatedProduct;
   }
 }

@@ -1,11 +1,6 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
 export class CreateProductDto {
-  @IsNumber()
-  @IsOptional()
-  @Min(1)
-  id?: number;
-
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -14,11 +9,10 @@ export class CreateProductDto {
   @IsNotEmpty()
   model: string;
 
-  @IsNotEmpty()
   @IsNumber()
+  @Min(0)
   price: number;
 
-  @IsNotEmpty()
   @IsNumber()
   modelYear: number;
 }

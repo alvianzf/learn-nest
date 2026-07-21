@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+
+export interface Product extends CreateProductDto {
+  id: number;
+}
 
 @Injectable()
 export class ProductsRepository {
   // Refactoring
 
-  private products: CreateProductDto[] = [
+  private products: Product[] = [
     {
       id: 1,
       name: 'Wireless Mouse',
@@ -35,9 +40,30 @@ export class ProductsRepository {
       modelYear: 2023,
     },
   ];
-  private nextId = 4;
+  private nextId = 5;
 
-  getAllProducts(): CreateProductDto[] {
+  getAllProducts(): Product[] {
     return this.products;
+  }
+
+  getProductById(id: number): Product | undefined {
+    return this.products.find((product) => product.id === id);
+  }
+
+  createProduct(dto: CreateProductDto): Product {
+    const product: Product = { ...dto, id: this.nextId++ };
+    this.products.push(product);
+    return product;
+  }
+
+  updateProduct(id: number, dto: UpdateProductDto): Product | undefined {
+    const product = this.getProductById(id);
+
+    if (!product) {
+      return undefined;
+    }
+
+    Object.assign(product, dto);
+    return product;
   }
 }
