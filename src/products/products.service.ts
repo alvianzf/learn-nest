@@ -1,56 +1,38 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductsRepository } from './products.repository';
 
 @Injectable()
 export class ProductsService {
-  private products: CreateProductDto[] = [
-    {
-      id: 1,
-      name: 'Wireless Mouse',
-      model: 'WM-100',
-      price: 150000,
-      modelYear: 2023,
-    },
-    {
-      id: 2,
-      name: 'Bluetooth Headphones',
-      model: 'BH-200',
-      price: 599900,
-      modelYear: 2024,
-    },
-    {
-      id: 3,
-      name: 'Gaming Keyboard',
-      model: 'GK-300',
-      price: 899900,
-      modelYear: 2024,
-    },
-    {
-      id: 4,
-      name: 'USB-C Charger',
-      model: 'UC-50',
-      price: 249900,
-      modelYear: 2023,
-    },
-  ];
-  private nextId = 4;
+  constructor(private readonly productsRepository: ProductsRepository) {}
 
-  getAllProducts() {
-    return this.products;
+  getAllProducts(): CreateProductDto[] | undefined {
+    return this.productsRepository.getAllProducts();
   }
 
-  getProductById(id: string) {
+  getProductById(id: string): CreateProductDto | undefined {
     const productId = parseInt(id);
-    return this.products.find((product) => product.id === productId);
+    return this.productsRepository
+      .getAllProducts()
+      .find((product) => product.id === productId);
   }
 
   createProduct(dto: CreateProductDto) {
-    const newProduct: CreateProductDto = {
-      id: this.nextId + 1,
-      ...dto,
-    };
+    return this.productsRepository.getAllProducts().push(dto);
+  }
 
-    this.products.push(newProduct);
-    return newProduct;
+  updateProduct(id: string, dto: UpdateProductDto) {
+    // DRY
+    // DON'T REPEAT YOURSELF
+    const currentData = this.getProductById(id);
+
+    if (!currentData) {
+      return new NotFoundException('Product not found');
+      // returns 404
+    }
+
+    const updatedProduct: UpdateProductDto = Object.assign(currentData, dto);
+    return updatedProduct;
   }
 }
