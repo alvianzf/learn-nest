@@ -11,8 +11,8 @@ export class ProductsService {
     return this.productsRepository.getAllProducts();
   }
 
-  getProductById(id: string): Product {
-    const product = this.productsRepository.getProductById(parseInt(id, 10));
+  getProductById(id: number): Product {
+    const product = this.productsRepository.getProductById(id);
 
     if (!product) {
       throw new NotFoundException('Product not found');
@@ -25,11 +25,8 @@ export class ProductsService {
     return this.productsRepository.createProduct(dto);
   }
 
-  updateProduct(id: string, dto: UpdateProductDto): Product {
-    const updatedProduct = this.productsRepository.updateProduct(
-      parseInt(id, 10),
-      dto,
-    );
+  updateProduct(id: number, dto: UpdateProductDto): Product {
+    const updatedProduct = this.productsRepository.updateProduct(id, dto);
 
     if (!updatedProduct) {
       throw new NotFoundException('Product not found');

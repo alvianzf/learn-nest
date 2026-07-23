@@ -2,10 +2,10 @@ import {
   Controller,
   Get,
   Param,
-  Query,
   Post,
   Body,
   Patch,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -21,7 +21,7 @@ export class ProductsController {
   }
 
   @Get(':id')
-  getProductById(@Param('id') id: string) {
+  getProductById(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.getProductById(id);
   }
 
@@ -31,7 +31,10 @@ export class ProductsController {
   }
 
   @Patch(':id')
-  updateProduct(@Param('id') id: string, @Body() dto: UpdateProductDto) {
+  updateProduct(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateProductDto,
+  ) {
     return this.productsService.updateProduct(id, dto);
   }
 }
